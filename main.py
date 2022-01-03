@@ -144,10 +144,15 @@ def predict():
         punk = dill.load(f)
         f.close()
 
+    print('punk', punk)
+
     with open('./model_files/stopwords.pkl', 'rb') as f:
         stwords = dill.load(f)
         f.close()
 
+    print('stwords', stwords)
+
+    '''
     with open('./model_files/custom_transformer.pkl', 'rb') as f:
         transformer = dill.load(f)
         f.close()
@@ -162,5 +167,5 @@ def predict():
     print(processed_input[:, 1:])
     pred = model.predict(X = processed_input[:, 1:])
     print(pred[0][0])
-
-    return pred[0][0]
+    '''
+    return 'predict'
