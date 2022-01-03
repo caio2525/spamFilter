@@ -1,31 +1,19 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import string
-import nltk
+import numpy as np
+import dill
+import pickle
 import re
 from sklearn.base import BaseEstimator, TransformerMixin
-import dill
 from urlextract import URLExtract
-import pickle
+import nltk
 from flask import Flask, request
 
-#nltk.download('stopwords')
-#nltk.download('punkt')
-
-with open('punct.pkl', 'rb') as f:
-    punk = dill.load(f)
-    f.close()
-
-with open('stopwords.pkl', 'rb') as f:
-    stwords = dill.load(f)
-    f.close()
 
 class customTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, re, extractor):
         self.re = re
         self.extractor = extractor
 
-    def pre_processing(self, text):
+    def pre_processing(self, text, punk, stwords):
         urls = list(set(self.extractor.find_urls(text)))
         for url in urls:
             text = text.replace(url, " URL ")
@@ -39,8 +27,8 @@ class customTransformer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return(self)
 
-    def transform(self, X, y=None):
-        processed_text = np.array([self.pre_processing(text) for text in X], dtype='object')
+    def transform(self, punk, stwords, X, y=None):
+        processed_text = np.array([self.pre_processing(text, punk, stwords) for text in X], dtype='object')
         return np.c_[X, processed_text]
 
 class customPredictor:
@@ -139,41 +127,37 @@ class customPredictor:
         predictions = [self.predicao(text) for text in X]
         return np.c_[predictions]
 
-
-
-#entrada = input('digite um email ')
-
-#processed_input = transformer.transform(X = np.array([entrada]))
-#print(processed_input)
-
-
-
-#print(processed_input[:, 1:])
-#pred = model.predict(X = processed_input[:, 1:])
-#print(pred)
-
 app = Flask('app')
 
 @app.route('/test', methods=['GET'])
 def test():
+    print('np.__version: ', np.__version__)
     return "Pinging Model Application!!"
 
 @app.route("/predict", methods=["POST"])
 def predict():
     json_data = request.json
     entrada = json_data['entrada']
-    print(entrada)
+    print('entrada:', entrada)
 
-    with open('custom_transformer2.pkl', 'rb') as f:
+    with open('./model_files/punct.pkl', 'rb') as f:
+        punk = dill.load(f)
+        f.close()
+
+    with open('./model_files/stopwords.pkl', 'rb') as f:
+        stwords = dill.load(f)
+        f.close()
+
+    with open('./model_files/custom_transformer.pkl', 'rb') as f:
         transformer = dill.load(f)
         f.close()
 
-    processed_input = transformer.transform(X = np.array([entrada]))
-    print(processed_input)
+    processed_input = transformer.transform(punk, stwords, X = np.array([entrada]))
+    print('processed_input:', processed_input)
 
-    with open("model.bin",mode='rb') as model_f:
-        model = pickle.load(model_f)
-        model_f.close()
+    with open('./model_files/model.bin', 'rb') as f:
+        model = dill.load(f)
+        f.close()
 
     print(processed_input[:, 1:])
     pred = model.predict(X = processed_input[:, 1:])
