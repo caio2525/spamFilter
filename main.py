@@ -6,7 +6,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from urlextract import URLExtract
 import nltk
 from flask import Flask, request
-
+import string
 
 class customTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, stopwords, punctuation, re, extractor):
@@ -142,21 +142,14 @@ def predict():
     entrada = json_data['entrada']
     print('entrada:', entrada)
 
-    with open('./model_files/punct.pkl', 'rb') as f:
-        punk = dill.load(f)
-        f.close()
+    nltk.download('stopwords')
+    nltk.download('punkt')
 
-    print('punk', punk)
-
-    with open('./model_files/stopwords.pkl', 'rb') as f:
-        stwords = dill.load(f)
-        f.close()
-
-    print('stwords', stwords)
-
+    stopwords = nltk.corpus.stopwords.words('english')
+    punctuation = string.punctuation
     extractor = URLExtract()
 
-    transformer = customTransformer(stwords, punk, re, extractor)
+    transformer = customTransformer(stopwords, punctuation, re, extractor)
 
     processed_input = transformer.transform(X = np.array([entrada]))
     print('processed_input:', processed_input)
