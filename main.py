@@ -159,8 +159,9 @@ def predict():
         model = dill.load(f)
         f.close()
 
-    print(processed_input[:, 1:])
-    pred = model.predict(X = processed_input[:, 1:])
-    print(pred[0][0])
+    print('processed_input[:, 1:]', processed_input[:, 1:])
+    print('type(processed_input[:, 1:])', type(processed_input[:, 1:]))
+    #pred = model.predict(X = processed_input[:, 1:])
+    #print(pred[0][0])
 
-    return pred[0][0]
+    return 'predict' #pred[0][0]
