@@ -154,14 +154,6 @@ def predict():
     processed_input = transformer.transform(X = np.array([entrada]))
     print('processed_input:', processed_input)
 
-    '''
-    with open('./model_files/custom_transformer.pkl', 'rb') as f:
-        transformer = dill.load(f)
-        f.close()
-
-    processed_input = transformer.transform(punk, stwords, X = np.array([entrada]))
-    print('processed_input:', processed_input)
-
 
     with open('./model_files/model.bin', 'rb') as f:
         model = dill.load(f)
@@ -170,5 +162,5 @@ def predict():
     print(processed_input[:, 1:])
     pred = model.predict(X = processed_input[:, 1:])
     print(pred[0][0])
-    '''
-    return 'predict'
+
+    return pred[0][0]
