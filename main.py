@@ -91,6 +91,8 @@ class customPredictor:
         self.probWordGivenSpamHam()
 
     def calcProb(self, text):
+        print('calcProb text ', text)
+        print('type calcProb text ', type(text))
         prob_spam_given_words = 100 * self.spam_problt;
         prob_ham_given_words = 100 * self.ham_problt;
         for word in text:
@@ -159,8 +161,8 @@ def predict():
         model = dill.load(f)
         f.close()
 
-    print('processed_input[:, 1:]', processed_input[:, 1:])
-    print('type(processed_input[:, 1:])', type(processed_input[:, 1:]))
+    print('processed_input[0, 1:]', processed_input[0, 1:])
+    print('type(processed_input[0, 1:])', type(processed_input[0, 1:]))
     #pred = model.predict(X = processed_input[:, 1:])
     #print(pred[0][0])
 
