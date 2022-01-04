@@ -9,26 +9,28 @@ from flask import Flask, request
 
 
 class customTransformer(BaseEstimator, TransformerMixin):
-    def __init__(self, re, extractor):
+    def __init__(self, stopwords, punctuation, re, extractor):
+        self.stopwords = stopwords
+        self.punctuation  = punctuation
         self.re = re
         self.extractor = extractor
 
-    def pre_processing(self, text, punk, stwords):
+    def pre_processing(self, text):
         urls = list(set(self.extractor.find_urls(text)))
         for url in urls:
             text = text.replace(url, " URL ")
         text = self.re.sub(r'\d+(?:\.\d*)?(?:[eE][+-]?\d+)?', 'NUMBER', text)
         lowercase = text.lower()
-        remove_ponc = ''.join([character for character in lowercase if character not in punk])
+        remove_ponc = ''.join([character for character in lowercase if character not in self.punctuation ])
         tokenize = nltk.tokenize.word_tokenize(remove_ponc)
-        remove_stopwords = [word for word in tokenize if word not in stwords]
+        remove_stopwords = [word for word in tokenize if word not in self.stopwords]
         return(remove_stopwords)
 
     def fit(self, X, y=None):
         return(self)
 
-    def transform(self, punk, stwords, X, y=None):
-        processed_text = np.array([self.pre_processing(text, punk, stwords) for text in X], dtype='object')
+    def transform(self, X, y=None):
+        processed_text = np.array([self.pre_processing(text) for text in X], dtype='object')
         return np.c_[X, processed_text]
 
 class customPredictor:
@@ -152,7 +154,14 @@ def predict():
 
     print('stwords', stwords)
 
+    extractor = URLExtract()
 
+    transformer = customTransformer(stwords, punk, re, extractor)
+
+    processed_input = transformer.transform(X = np.array([entrada]))
+    print('processed_input:', processed_input)
+
+    '''
     with open('./model_files/custom_transformer.pkl', 'rb') as f:
         transformer = dill.load(f)
         f.close()
@@ -160,7 +169,7 @@ def predict():
     processed_input = transformer.transform(punk, stwords, X = np.array([entrada]))
     print('processed_input:', processed_input)
 
-    '''
+
     with open('./model_files/model.bin', 'rb') as f:
         model = dill.load(f)
         f.close()
