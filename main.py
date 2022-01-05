@@ -98,8 +98,12 @@ class customPredictor:
         prob_ham_given_words = 100 * self.ham_problt;
         for word in text:
             print('word', word)
-            if word in self.prob_word_given_spam:
-                if word in self.prob_word_given_ham:
+            print('type(word)', type(word))
+            j = "".join(word)
+            print('j', j)
+            print('type(j)', type(j))
+            if j in self.prob_word_given_spam:
+                if j in self.prob_word_given_ham:
                     print('found')
                     #print('prob_word_given_spam', self.prob_word_given_spam[word])
                     #print('prob_word_given_ham', self.prob_word_given_ham[word])
