@@ -97,18 +97,31 @@ class customPredictor:
         prob_spam_given_words = 100 * self.spam_problt;
         prob_ham_given_words = 100 * self.ham_problt;
         for word in text:
-            print('word', word)
-            print('type(word)', type(word))
-            j = "".join(word)
-            print('j', j)
-            print('type(j)', type(j))
-            print('type prob_word_given_spam', type(self.prob_word_given_spam))
-            if self.prob_word_given_spam.get(word):
-                if self.prob_word_given_ham.get(word):
-                    print('found')
-                    #print('prob_word_given_spam', self.prob_word_given_spam[word])
-                    #print('prob_word_given_ham', self.prob_word_given_ham[word])
-        return(0)
+            pWGS = self.prob_word_given_spam.get(word)
+            pWGH = self.prob_word_given_ham.get(word)
+
+            if pWGS:
+                if pWGH:
+                    prob_spam_given_words *= pWGS
+                    prob_ham_given_words *= pWGH
+
+            if not pWGS:
+                if pWGH:
+                    prob_spam_given_words *= 0.4 * 100
+                    prob_ham_given_words *= 0.8 * 100
+
+            if pWGS:
+                if not pWGH:
+                    prob_spam_given_words *= 0.8 * 100
+                    prob_ham_given_words *= 0.4 * 100
+
+            if not pWGS:
+                if not pWGH:
+                    prob_spam_given_words *= 0.4 * 100
+                    prob_ham_given_words *= 0.6 * 100
+
+        return(prob_spam_given_words / (prob_spam_given_words + prob_ham_given_words) * 100)
+
 
     def classify(self, spam_probability):
         if (spam_probability > self.threshold):
@@ -159,6 +172,6 @@ def predict():
     print('processed_input[0, 1:]', processed_input[0, 1:])
     print('type(processed_input[0, 1:])', type(processed_input[0, 1:]))
     pred = model.predict(X = processed_input[:, 1:])
-    #print(pred[0][0])
+    print('pred', pred[0][0])
 
-    return 'predict' #pred[0][0]
+    return pred[0][0]
