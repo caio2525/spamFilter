@@ -100,8 +100,9 @@ class customPredictor:
             print('word', word)
             if word in self.prob_word_given_spam:
                 if word in self.prob_word_given_ham:
-                    print('prob_word_given_spam', self.prob_word_given_spam[word])
-                    print('prob_word_given_ham', self.prob_word_given_ham[word])
+                    print('found')
+                    #print('prob_word_given_spam', self.prob_word_given_spam[word])
+                    #print('prob_word_given_ham', self.prob_word_given_ham[word])
         return(0)
 
     def classify(self, spam_probability):
