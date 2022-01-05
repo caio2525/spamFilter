@@ -93,7 +93,9 @@ class customPredictor:
     def calcProb(self, text):
         print('calcProb text ', text)
         print('type calcProb text ', type(text))
-        print('self.prob_word_given_spam', self.prob_word_given_spam)
+        #print('self.prob_word_given_spam', self.prob_word_given_spam)
+        for word in text:
+            print('word', word)
         return(0)
 
     def classify(self, spam_probability):
@@ -111,7 +113,7 @@ class customPredictor:
         print('type(X)', type(X))
         predictions = [self.predicao(text) for text in X]
         return np.c_[predictions]
-        
+
 app = Flask('app')
 
 @app.route('/test', methods=['GET'])
