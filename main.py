@@ -102,8 +102,9 @@ class customPredictor:
             j = "".join(word)
             print('j', j)
             print('type(j)', type(j))
-            if j in self.prob_word_given_spam:
-                if j in self.prob_word_given_ham:
+            print('type prob_word_given_spam', type(self.prob_word_given_spam))
+            if self.prob_word_given_spam.get(word):
+                if self.prob_word_given_ham.get(word):
                     print('found')
                     #print('prob_word_given_spam', self.prob_word_given_spam[word])
                     #print('prob_word_given_ham', self.prob_word_given_ham[word])
