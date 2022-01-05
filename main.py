@@ -93,29 +93,8 @@ class customPredictor:
     def calcProb(self, text):
         print('calcProb text ', text)
         print('type calcProb text ', type(text))
-        prob_spam_given_words = 100 * self.spam_problt;
-        prob_ham_given_words = 100 * self.ham_problt;
-        for word in text:
-            if word in self.prob_word_given_spam:
-                if word in self.prob_word_given_ham:
-                    prob_spam_given_words *= self.prob_word_given_spam[word]
-                    prob_ham_given_words *= self.prob_word_given_ham[word]
-
-            elif word not in self.prob_word_given_spam:
-                if word in self.prob_word_given_ham:
-                    prob_spam_given_words *= 0.6 * 100
-                    prob_ham_given_words *= 0.4 * 100
-
-            elif word in self.prob_word_given_spam:
-                if word not in self.prob_word_given_ham:
-                    prob_spam_given_words *= 0.6 * 100
-                    prob_ham_given_words *= 0.4 * 100
-
-            elif word not in self.prob_word_given_spam:
-                if word not in self.prob_word_given_ham:
-                    prob_spam_given_words *= 0.4 * 100
-                    prob_ham_given_words *= 0.6 * 100
-        return(prob_spam_given_words / (prob_spam_given_words + prob_ham_given_words) * 100)
+        print('self.prob_word_given_spam', self.prob_word_given_spam)
+        return(0)
 
     def classify(self, spam_probability):
         if (spam_probability > self.threshold):
@@ -128,9 +107,11 @@ class customPredictor:
         return(self.classify(spam_probability))
 
     def predict(self, X):
+        print('X', X)
+        print('type(X)', type(X))
         predictions = [self.predicao(text) for text in X]
         return np.c_[predictions]
-
+        
 app = Flask('app')
 
 @app.route('/test', methods=['GET'])
@@ -163,7 +144,7 @@ def predict():
 
     print('processed_input[0, 1:]', processed_input[0, 1:])
     print('type(processed_input[0, 1:])', type(processed_input[0, 1:]))
-    #pred = model.predict(X = processed_input[:, 1:])
+    pred = model.predict(X = processed_input[:, 1:])
     #print(pred[0][0])
 
     return 'predict' #pred[0][0]
