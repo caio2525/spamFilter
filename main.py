@@ -5,7 +5,7 @@ import re
 from sklearn.base import BaseEstimator, TransformerMixin
 from urlextract import URLExtract
 import nltk
-from flask import Flask, request
+from flask import Flask, request, render_template, make_response
 import string
 
 class customTransformer(BaseEstimator, TransformerMixin):
@@ -141,10 +141,9 @@ class customPredictor:
 
 app = Flask('app')
 
-@app.route('/test', methods=['GET'])
+@app.route('/', methods=['GET'])
 def test():
-    print('np.__version: ', np.__version__)
-    return "Pinging Model Application!!"
+    return render_template('index.html')
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -174,4 +173,8 @@ def predict():
     pred = model.predict(X = processed_input[:, 1:])
     print('pred', pred[0][0])
 
-    return pred[0][0]
+    response = make_response(pred[0][0])
+    #response.headers.set('Content-Type', 'multipart/form-data')
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
