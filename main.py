@@ -178,6 +178,6 @@ def predict():
 
     response = make_response(pred[0][0])
     #response.headers.set('Content-Type', 'multipart/form-data')
-    response.headers.add('Access-Control-Allow-Origin', '*')
+    #response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
