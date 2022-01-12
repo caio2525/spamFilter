@@ -7,6 +7,7 @@ from urlextract import URLExtract
 import nltk
 from flask import Flask, request, render_template, make_response
 import string
+from flask_cors import CORS, cross_origin
 
 class customTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, stopwords, punctuation, re, extractor):
@@ -140,12 +141,14 @@ class customPredictor:
         return np.c_[predictions]
 
 app = Flask('app')
+CORS(app)
 
 @app.route('/', methods=['GET'])
 def test():
     return render_template('index.html')
 
 @app.route("/predict", methods=["POST"])
+@cross_origin()
 def predict():
     json_data = request.json
     entrada = json_data['entrada']
