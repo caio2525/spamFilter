@@ -35,7 +35,7 @@ class customTransformer(BaseEstimator, TransformerMixin):
         return np.c_[X, processed_text]
 
 class customPredictor:
-    def __init__(self, threshold = 85):
+    def __init__(self, threshold = 85, spam_problt = 0.5, ham_problt = 0.5):
         self.spam_messages = []
         self.ham_messages = []
         self.spam_words = []
@@ -86,7 +86,7 @@ class customPredictor:
 
     def fit(self, X, y):
         self.splitSpamHamMessages(X, y)
-        self.calcSpamHamProb()
+        #self.calcSpamHamProb()
         self.bagOfWord()
         self.uniqueSpamHamWords()
         self.probWordGivenSpamHam()
@@ -109,11 +109,11 @@ class customPredictor:
             if not pWGS:
                 if pWGH:
                     prob_spam_given_words *= 0.4 * 100
-                    prob_ham_given_words *= 0.8 * 100
+                    prob_ham_given_words *= 0.6 * 100
 
             if pWGS:
                 if not pWGH:
-                    prob_spam_given_words *= 0.8 * 100
+                    prob_spam_given_words *= 0.6 * 100
                     prob_ham_given_words *= 0.4 * 100
 
             if not pWGS:
@@ -122,7 +122,6 @@ class customPredictor:
                     prob_ham_given_words *= 0.6 * 100
 
         return(prob_spam_given_words / (prob_spam_given_words + prob_ham_given_words) * 100)
-
 
     def classify(self, spam_probability):
         if (spam_probability > self.threshold):
@@ -139,7 +138,7 @@ class customPredictor:
         print('type(X)', type(X))
         predictions = [self.predicao(text) for text in X]
         return np.c_[predictions]
-
+        
 app = Flask('app')
 CORS(app)
 
