@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Spam Filter</title>
-  </head>
-  <body>
-    <p>teste</p>
-  </body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}
+  <title>Spam Filter Model</title>
+{% endblock %}
+
+{% block main %}
+<h1>Spam Filter Model</h1>
+<p>Spam Filter Model based on the content of the message and how often the words within that message occur in spam and ham messages.</p>
+<form action="/" method="post">
+  <label for="email">Type in your message</label>
+  <textarea rows="5" cols="25" type="text" name="email"required>
+  </textarea>
+  <input type="submit" value="Submit">
+</form>
+{% endblock %}

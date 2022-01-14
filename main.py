@@ -5,7 +5,7 @@ import re
 from sklearn.base import BaseEstimator, TransformerMixin
 from urlextract import URLExtract
 import nltk
-from flask import Flask, request, render_template, make_response
+from flask import Flask, request, render_template, make_response, redirect
 import string
 from flask_cors import CORS, cross_origin
 
@@ -138,13 +138,50 @@ class customPredictor:
         print('type(X)', type(X))
         predictions = [self.predicao(text) for text in X]
         return np.c_[predictions]
-        
+
+def predizer(entrada):
+    nltk.download('stopwords')
+    nltk.download('punkt')
+
+    stopwords = nltk.corpus.stopwords.words('english')
+    punctuation = string.punctuation
+    extractor = URLExtract()
+
+    transformer = customTransformer(stopwords, punctuation, re, extractor)
+
+    processed_input = transformer.transform(X = np.array([entrada]))
+    print('processed_input:', processed_input)
+
+
+    with open('./model_files/model.bin', 'rb') as f:
+        model = dill.load(f)
+        f.close()
+
+    print('processed_input[0, 1:]', processed_input[0, 1:])
+    print('type(processed_input[0, 1:])', type(processed_input[0, 1:]))
+    pred = model.predict(X = processed_input[:, 1:])
+    print('pred', pred[0][0])
+
+    return pred[0][0];
+
+
 app = Flask('app')
 CORS(app)
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def test():
-    return render_template('index.html')
+    if request.method == 'GET':
+        return render_template('index.html')
+    else:
+        form_data = request.form
+        print('form_data', form_data)
+        entrada = form_data['email']
+        pred = predizer(entrada)
+
+        if(pred == "spam"):
+            return render_template('result.html', value='Spam', back="red")
+        else:
+            return render_template('result.html', value='Ham', back="green")
 
 @app.route("/predict", methods=["POST"])
 @cross_origin()
